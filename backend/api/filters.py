@@ -5,7 +5,7 @@ from recipes.models import Ingredient, Recipe, Tag
 
 
 class RecipeFilter(django_filters.FilterSet):
-    '''Кастомные фильтры для Рецепта.'''
+    """Кастомные фильтры для Рецепта."""
     tags = django_filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
@@ -33,7 +33,7 @@ class RecipeFilter(django_filters.FilterSet):
 
 
 class IngredientSearch(SearchFilter):
-    '''Кастомные фильтры для Ингредиента.'''
+    """Кастомные фильтры для Ингредиента."""
     search_param = 'name'
 
     class Meta:
