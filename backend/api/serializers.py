@@ -2,6 +2,10 @@ import webcolors
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
+from recipes.constants import (
+MAX_QUANTITY,
+MIN_QUANTITY
+)
 from recipes.models import (
     FavoriteRecipes,
     Ingredient,
@@ -14,7 +18,7 @@ from users.serializers import CustomUserSerializer
 
 
 class Hex2NameColor(serializers.Field):
-    '''Метод перевода цвета в Hex в название.'''
+    """Метод перевода цвета в Hex в название."""
     def to_representation(self, value):
         return value
 
@@ -27,14 +31,14 @@ class Hex2NameColor(serializers.Field):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    '''Сериализатор Ингредиентов.'''
+    """Сериализатор Ингредиентов."""
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
 
 
 class TagSerializer(serializers.ModelSerializer):
-    '''Сериализатор Тэгов.'''
+    """Сериализатор Тэгов."""
     color = Hex2NameColor()
 
     class Meta:
@@ -43,14 +47,14 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    '''Сериализатор Рецепта для вывода частичной информации о нем.'''
+    """Сериализатор Рецепта для вывода частичной информации о нем."""
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
-    '''Сериализатор для модели IngredientInRecipe.'''
+    """Сериализатор для модели IngredientInRecipe."""
     id = serializers.IntegerField(source='ingredient.id')
     name = serializers.CharField(read_only=True, source='ingredient.name')
     measurement_unit = serializers.CharField(
@@ -63,8 +67,11 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 
 class IngridientAddRecipeSerializer(serializers.ModelSerializer):
-    '''Сериализатор добавления ингредиента в рецепт.'''
+    """Сериализатор добавления ингредиента в рецепт."""
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    amount = serializers.IntegerField(
+        required=True, min_value=MIN_QUANTITY, max_value=MAX_QUANTITY
+    )
 
     class Meta:
         model = IngredientInRecipe
@@ -72,7 +79,7 @@ class IngridientAddRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
-    '''Сериализатор для получения Рецептов/Рецепта.'''
+    """Сериализатор для получения Рецептов/Рецепта."""
     tags = TagSerializer(read_only=True, many=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = IngredientInRecipeSerializer(many=True, source='recipe')
@@ -107,7 +114,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
 
 class RecipeAddSerializer(serializers.ModelSerializer):
-    '''Сериализатор для получения Рецептов/Рецепта.'''
+    """Сериализатор для получения Рецептов/Рецепта."""
     image = Base64ImageField(required=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
@@ -115,7 +122,9 @@ class RecipeAddSerializer(serializers.ModelSerializer):
         many=True
     )
     ingredients = IngridientAddRecipeSerializer(many=True, required=True)
-    cooking_time = serializers.IntegerField(required=True, min_value=1)
+    cooking_time = serializers.IntegerField(
+        required=True, min_value=MIN_QUANTITY, max_value=MAX_QUANTITY
+    )
     author = CustomUserSerializer(read_only=True)
 
     class Meta:
@@ -144,7 +153,7 @@ class RecipeAddSerializer(serializers.ModelSerializer):
         unique_ing_list = set([ing['id'] for ing in ing_list])
         if len(ing_list) != len(unique_ing_list):
             raise serializers.ValidationError(
-                'Ингридиенты не должны повторяться'
+                'Ингредиенты не должны повторяться'
             )
         return attrs
 
@@ -193,7 +202,7 @@ class RecipeAddSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    '''Сериализатор Избранного.'''
+    """Сериализатор Избранного."""
     class Meta:
         model = FavoriteRecipes
         fields = ('user', 'recipe')
@@ -215,7 +224,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    '''Сериализатор Продуктовой Корзины.'''
+    """Сериализатор Продуктовой Корзины."""
     class Meta:
         model = ShoppingCart
         fields = ('user', 'recipe')
