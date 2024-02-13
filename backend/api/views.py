@@ -27,15 +27,15 @@ from recipes.models import (
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    '''Вьюсет получения списка тэгов/одного тэга.'''
+    """Вьюсет получения списка тэгов/одного тэга."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    '''Вьюсет получения списка ингредиентов/одного ингредиента.
-    Доступен фильтр по полю name.'''
+    """Вьюсет получения списка ингредиентов/одного ингредиента.
+    Доступен фильтр по полю name."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
@@ -44,9 +44,9 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    '''Вьюсет Рецептов.
+    """Вьюсет Рецептов.
     Доступен фильтр по полям (tags, author, is_favorited,
-    is_in_sopping_cart).'''
+    is_in_sopping_cart)."""
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
     permission_classes = (AuthorOrReadOnly,)
@@ -142,8 +142,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         cart_data = 'Надо купить: \n'
         for item, value in cart.items():
             cart_data += (f'{item} - {value}\n')
-        filename = "shopping_cart.txt"
+        filename = 'shopping_cart.txt'
         response = HttpResponse(cart_data, content_type='text/plain')
-        response['Content-Disposition'] = \
-            f'attachment; filename="{filename}"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{filename}"')
         return response
