@@ -74,7 +74,7 @@ class Recipe(models.Model):
     pub_date = models.DateTimeField('Время побликации', auto_now_add=True)
 
     def __str__(self) -> str:
-        return self.name[:20]
+        return self.name[:NAME_MAX_LENGTH_LIMIT]
 
     class Meta:
         verbose_name = 'Рецепт'
