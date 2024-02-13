@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    '''Модель Тэгов.'''
+    """Модель Тэгов."""
     name = models.CharField('Назавание тэга', max_length=200)
     color = ColorField('HEX-код цвета', max_length=7, unique=True)
     slug = models.SlugField('Слаг', unique=True, max_length=50)
@@ -22,7 +22,7 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    '''Модель Ингредиентов.'''
+    """Модель Ингредиентов."""
     name = models.CharField('Название продукта', max_length=200)
     measurement_unit = models.CharField('Мера измерения', max_length=50)
 
@@ -36,7 +36,7 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    '''Модель Рецептов.'''
+    """Модель Рецептов."""
     author = models.ForeignKey(
         User, verbose_name="Автор",
         related_name='recipes',
@@ -77,7 +77,7 @@ class Recipe(models.Model):
 
 
 class IngredientInRecipe(models.Model):
-    '''Модель для связи Ингредиентов и рецептов.'''
+    """Модель для связи Ингредиентов и рецептов."""
     recipe = models.ForeignKey(
         Recipe, related_name='recipe', on_delete=models.CASCADE
     )
@@ -100,7 +100,7 @@ class IngredientInRecipe(models.Model):
 
 
 class FavoriteRecipes(models.Model):
-    '''Модель Избранного.'''
+    """Модель Избранного."""
     user = models.ForeignKey(
         User,
         verbose_name='Пользователь',
@@ -129,7 +129,7 @@ class FavoriteRecipes(models.Model):
 
 
 class ShoppingCart(models.Model):
-    '''Модель Списка Покупок.'''
+    """Модель Списка Покупок."""
     user = models.ForeignKey(
         User,
         verbose_name='Пользователь',
