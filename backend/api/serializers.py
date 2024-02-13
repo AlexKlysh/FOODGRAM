@@ -3,8 +3,8 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.constants import (
-MAX_QUANTITY,
-MIN_QUANTITY
+    MAX_QUANTITY,
+    MIN_QUANTITY
 )
 from recipes.models import (
     FavoriteRecipes,
@@ -99,7 +99,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, obj):
         request = self.context.get('request')
         if request.user.is_authenticated:
-            return recipe.fav_recipes.filter(
+            return obj.fav_recipes.filter(
                 user=request.user
             ).exists()
         return False
@@ -107,7 +107,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if request.user.is_authenticated:
-            return recipe.shopping_cart.filter(
+            return obj.shopping_cart.filter(
                 user=request.user
             ).exists()
         return False

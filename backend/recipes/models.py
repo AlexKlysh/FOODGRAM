@@ -4,7 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from recipes.constants import (MAX_QUANTITY, MIN_QUANTITY,
-                              NAME_MAX_LENGTH_LIMIT) 
+                               NAME_MAX_LENGTH_LIMIT)
 
 User = get_user_model()
 
@@ -59,10 +59,11 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
         validators=(MinValueValidator(
-            MIN_QUANTITY, message=f'Время приготовления не может быть меньше {MIN_QUANTITY} минуты'
-        ),
-        MaxValueValidator(
-            MAX_QUANTITY, message=f'Время приготовления не может быть больше {MAX_QUANTITY} минут'
+            MIN_QUANTITY,
+            f'Время приготовления не может быть меньше {MIN_QUANTITY} минуты'
+        ), MaxValueValidator(
+            MAX_QUANTITY,
+            f'Время приготовления не может быть больше {MAX_QUANTITY} минут'
         ),)
     )
     ingredients = models.ManyToManyField(
@@ -94,8 +95,8 @@ class IngredientInRecipe(models.Model):
         'Количество',
         validators=(MinValueValidator(
             MIN_QUANTITY, f'Количесвто не может быть меньше {MIN_QUANTITY}'
-        ),
-        MaxValueValidator(MAX_QUANTITY, f'Количесвто не может быть больше {MAX_QUANTITY}')
+        ), MaxValueValidator(
+            MAX_QUANTITY, f'Количесвто не может быть больше {MAX_QUANTITY}')
         ),
     )
 
