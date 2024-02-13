@@ -1,7 +1,10 @@
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from recipes.constants import (MAX_QUANTITY, MIN_QUANTITY,
+                              NAME_MAX_LENGTH_LIMIT) 
 
 User = get_user_model()
 
@@ -13,7 +16,7 @@ class Tag(models.Model):
     slug = models.SlugField('Слаг', unique=True, max_length=50)
 
     def __str__(self) -> str:
-        return self.name[:20]
+        return self.name[:NAME_MAX_LENGTH_LIMIT]
 
     class Meta:
         verbose_name = 'Тэг'
@@ -27,7 +30,7 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField('Мера измерения', max_length=50)
 
     def __str__(self) -> str:
-        return self.name[:20]
+        return self.name[:NAME_MAX_LENGTH_LIMIT]
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -56,7 +59,10 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
         validators=(MinValueValidator(
-            1, message='Время приготовления не может быть меньше 1 минуты'
+            MIN_QUANTITY, message=f'Время приготовления не может быть меньше {MIN_QUANTITY} минуты'
+        ),
+        MaxValueValidator(
+            MAX_QUANTITY, message=f'Время приготовления не может быть больше {MAX_QUANTITY} минут'
         ),)
     )
     ingredients = models.ManyToManyField(
@@ -87,8 +93,10 @@ class IngredientInRecipe(models.Model):
     amount = models.PositiveIntegerField(
         'Количество',
         validators=(MinValueValidator(
-            1, message='Количесвто не может быть меньше 1'
-        ),)
+            MIN_QUANTITY, f'Количесвто не может быть меньше {MIN_QUANTITY}'
+        ),
+        MaxValueValidator(MAX_QUANTITY, f'Количесвто не может быть больше {MAX_QUANTITY}')
+        ),
     )
 
     class Meta:
