@@ -99,16 +99,16 @@ class RecipeListSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, obj):
         request = self.context.get('request')
         if request.user.is_authenticated:
-            return FavoriteRecipes.objects.filter(
-                user=request.user, recipe=obj
+            return recipe.fav_recipes.filter(
+                user=request.user
             ).exists()
         return False
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if request.user.is_authenticated:
-            return ShoppingCart.objects.filter(
-                user=request.user, recipe=obj
+            return recipe.shopping_cart.filter(
+                user=request.user
             ).exists()
         return False
 
@@ -157,13 +157,8 @@ class RecipeAddSerializer(serializers.ModelSerializer):
             )
         return attrs
 
-    def create(self, validated_data):
-        tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(
-            **validated_data
-        )
-        recipe.tags.set(tags)
+    @staticmethod
+    def create_ingredients(recipe, ingredients):
         ingredients_list = [
             IngredientInRecipe(
                 recipe=recipe,
@@ -172,6 +167,15 @@ class RecipeAddSerializer(serializers.ModelSerializer):
             ) for ingredient in ingredients
         ]
         IngredientInRecipe.objects.bulk_create(ingredients_list)
+
+    def create(self, validated_data):
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+        recipe = Recipe.objects.create(
+            **validated_data
+        )
+        recipe.tags.set(tags)
+        self.create_ingredients(recipe, ingredients)
         return recipe
 
     def update(self, instance, validated_data):
@@ -182,14 +186,7 @@ class RecipeAddSerializer(serializers.ModelSerializer):
         if ingredients:
             instance.ingredients.clear()
         instance.tags.set(tags)
-        ingredients_list = [
-            IngredientInRecipe(
-                recipe=instance,
-                ingredient=ingredient['id'],
-                amount=ingredient['amount']
-            ) for ingredient in ingredients
-        ]
-        IngredientInRecipe.objects.bulk_create(ingredients_list)
+        self.create_ingredients(instance, ingredients)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
