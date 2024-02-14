@@ -97,7 +97,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        request = self.context.get('request')
+        request = self.context['request']
         if request.user.is_authenticated:
             return obj.fav_recipes.filter(
                 user=request.user
@@ -105,7 +105,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
+        request = self.context['request']
         if request.user.is_authenticated:
             return obj.shopping_cart.filter(
                 user=request.user
@@ -193,7 +193,7 @@ class RecipeAddSerializer(serializers.ModelSerializer):
         return RecipeListSerializer(
             instance,
             context={
-                'request': self.context.get('request')
+                'request': self.context['request']
             }
         ).data
 
@@ -214,7 +214,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return attrs
 
     def to_representation(self, instance):
-        request = self.context.get('request')
+        request = self.context['request']
         return RecipeSerializer(
             instance.recipe, context={'request': request}
         ).data
@@ -236,7 +236,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         return attrs
 
     def to_representation(self, instance):
-        request = self.context.get('request')
+        request = self.context['request']
         return RecipeSerializer(
             instance.recipe, context={'request': request}
         ).data
