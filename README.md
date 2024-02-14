@@ -7,7 +7,7 @@
 klyshgram.bounceme.net
 
 **Админка:**
-Email - klysha88@yandex.ru
+Email - klysha88@yandex.ru;
 Пароль - 1234
 - - -
 
