@@ -12,8 +12,8 @@ class RecipeFilter(django_filters.FilterSet):
         queryset=Tag.objects.all()
     )
 
-    is_favorited = django_filters.BooleanFilter(method='filter_is_favorited')
-    is_in_shopping_cart = django_filters.BooleanFilter(
+    is_favorited = django_filters.NumberFilter(method='filter_is_favorited')
+    is_in_shopping_cart = django_filters.NumberFilter(
         method='filter_is_in_shopping_cart'
     )
 
